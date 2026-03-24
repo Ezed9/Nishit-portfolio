@@ -1,3 +1,4 @@
+import { AgentDock } from "@/components/agents/agent-dock";
 import { AboutSection } from "@/components/sections/about";
 import { ContactSection } from "@/components/sections/contact";
 import { ExperienceSection } from "@/components/sections/experience";
@@ -12,6 +13,7 @@ export default function HomePage() {
       <ProjectsSection />
       <ExperienceSection />
       <ContactSection />
+      <AgentDock />
     </main>
   );
 }

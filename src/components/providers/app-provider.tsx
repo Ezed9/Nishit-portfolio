@@ -7,6 +7,11 @@ import { AgentProvider } from "@/components/providers/agent-provider";
 
 export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (media.matches) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.05,
       smoothWheel: true

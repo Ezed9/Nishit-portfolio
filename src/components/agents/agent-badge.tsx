@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import { type AgentDefinition } from "@/lib/agents";
 import { cn } from "@/lib/utils";
@@ -9,54 +9,52 @@ import { useAgentState } from "@/components/providers/agent-provider";
 export function AgentBadge({ agent }: { agent: AgentDefinition }) {
   const { activeAgent, setActiveAgent } = useAgentState();
   const isActive = activeAgent === agent.id;
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.button
-      whileHover={{ y: -4 }}
-      whileTap={{ scale: 0.98 }}
+      aria-pressed={isActive}
+      whileHover={prefersReducedMotion ? undefined : { y: -3 }}
+      whileTap={prefersReducedMotion ? undefined : { scale: 0.99 }}
       className={cn(
-        "group rounded-[1.75rem] border p-4 text-left backdrop-blur transition",
+        "focus-ring group rounded-[1.5rem] border p-4 text-left transition",
         isActive
-          ? `${agent.glow} border-white/30 bg-white/12`
-          : "border-white/10 bg-black/30 hover:border-white/20 hover:bg-white/8"
+          ? `${agent.glow} border-[color:var(--panel-border)] bg-[color:var(--surface-2)]`
+          : "border-[color:var(--panel-border)] bg-[rgba(255,255,255,0.66)] hover:bg-[color:var(--surface-1)]"
       )}
       onClick={() => setActiveAgent(agent.id)}
       type="button"
     >
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-text-muted">Roster Slot</p>
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-text-muted">Helper card</p>
           <div className="mt-2 flex items-center gap-3">
             <span
-              className="h-3 w-3 rounded-full"
-              style={{ backgroundColor: agent.accent, boxShadow: `0 0 18px ${agent.accent}` }}
+              className="h-4 w-4 rounded-full border border-white/70"
+              style={{ backgroundColor: agent.accent, boxShadow: `0 8px 18px ${agent.accent}` }}
             />
             <div>
-              <p className="font-display text-lg tracking-[0.18em] text-text-primary">{agent.name}</p>
-              <p className="text-sm text-text-secondary">{agent.className}</p>
+              <p className="font-display text-lg text-text-primary">{agent.name}</p>
+              <p className="text-sm text-text-secondary">{agent.role}</p>
             </div>
           </div>
         </div>
-        <span className="rounded-full border border-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-text-secondary">
-          {isActive ? "Selected" : "Standby"}
+        <span className="soft-chip rounded-full px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] text-text-secondary">
+          {isActive ? "Watching" : "Tap me"}
         </span>
       </div>
       <div className="mb-4 flex flex-wrap gap-2">
-        <span className="rounded-full border border-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted">
-          {agent.role}
-        </span>
-        <span className="rounded-full border border-white/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted">
+        <span className="soft-chip rounded-full px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] text-text-muted">
           {agent.temperament}
         </span>
+        <span className="soft-chip rounded-full px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] text-text-muted">
+          {agent.className}
+        </span>
       </div>
-      <p className="mb-4 text-sm leading-7 text-text-secondary">{agent.description}</p>
-      <div className="grid gap-2 sm:grid-cols-3">
-        {agent.stats.map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-muted">{stat.label}</p>
-            <p className="mt-2 font-display text-xl text-text-primary">{stat.value}</p>
-          </div>
-        ))}
+      <p className="mb-4 text-sm leading-6 text-text-secondary">{agent.description}</p>
+      <div className="rounded-[1.1rem] border border-[color:var(--panel-border)] bg-[rgba(255,255,255,0.6)] px-4 py-3">
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-text-muted">Favorite loop</p>
+        <p className="mt-2 text-sm text-text-secondary">{agent.tasks[0]}</p>
       </div>
     </motion.button>
   );
