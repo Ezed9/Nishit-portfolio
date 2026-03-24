@@ -7,6 +7,11 @@ import { AgentProvider } from "@/components/providers/agent-provider";
 
 export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("capture") === "1") {
+      return;
+    }
+
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (media.matches) {
       return;

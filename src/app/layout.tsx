@@ -5,8 +5,8 @@ import { AppProvider } from "@/components/providers/app-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nishit | AI Workshop Portfolio",
-  description: "AI/ML portfolio concept built as a live workshop run by four agent personas."
+  title: "Nishit | Agent Systems Portfolio",
+  description: "AI/ML portfolio staged as an agent operating world with visible build, retrieval, storytelling, and delivery flows."
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -7,7 +7,7 @@ import { ProjectsSection } from "@/components/sections/projects";
 
 export default function HomePage() {
   return (
-    <main className="bg-base-primary text-text-primary">
+    <main className="world-shell bg-base-primary text-text-primary">
       <HeroSection />
       <AboutSection />
       <ProjectsSection />

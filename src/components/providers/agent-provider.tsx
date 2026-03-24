@@ -6,18 +6,26 @@ import {
   type ReactNode,
   type SetStateAction,
   useContext,
-  useEffect,
   useMemo,
   useState
 } from "react";
 
-import { agents, type AgentId } from "@/lib/agents";
+import { type AgentId } from "@/lib/agents";
 import { defaultActiveAgent } from "@/lib/constants";
-import { createInitialLoopState, nextLoopState, type AgentLoopState, type Station, stations } from "@/lib/agent-world";
+import {
+  createSeedRuns,
+  describeRun,
+  type AgentRun,
+  type AgentCapability,
+  type Station,
+  capabilityByAgentId,
+  stations
+} from "@/lib/agent-world";
 
 type AgentContextValue = {
   activeAgent: AgentId;
-  loopState: AgentLoopState[];
+  capabilities: Record<AgentId, AgentCapability>;
+  runs: AgentRun[];
   miniFeed: string[];
   stations: Station[];
   setActiveAgent: Dispatch<SetStateAction<AgentId>>;
@@ -27,37 +35,11 @@ const AgentContext = createContext<AgentContextValue | null>(null);
 
 export function AgentProvider({ children }: { children: ReactNode }) {
   const [activeAgent, setActiveAgent] = useState<AgentId>(defaultActiveAgent);
-  const [loopState, setLoopState] = useState<AgentLoopState[]>(() =>
-    agents.map((agent, index) => createInitialLoopState(agent, index))
-  );
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(media.matches);
-
-    update();
-    media.addEventListener("change", update);
-
-    return () => media.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    if (reducedMotion) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setLoopState((current) => current.map(nextLoopState));
-    }, 2400);
-
-    return () => window.clearInterval(interval);
-  }, [reducedMotion]);
-
-  const miniFeed = useMemo(() => loopState.slice(0, 3).map((entry) => entry.note), [loopState]);
+  const [runs] = useState<AgentRun[]>(() => createSeedRuns());
+  const miniFeed = useMemo(() => runs.map((run) => describeRun(run)).slice(0, 3), [runs]);
 
   return (
-    <AgentContext.Provider value={{ activeAgent, loopState, miniFeed, setActiveAgent, stations }}>
+    <AgentContext.Provider value={{ activeAgent, capabilities: capabilityByAgentId, runs, miniFeed, setActiveAgent, stations }}>
       {children}
     </AgentContext.Provider>
   );

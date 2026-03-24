@@ -2,7 +2,7 @@
 
 import { Mascot } from "@/components/agents/agent-arena";
 import { useAgentState } from "@/components/providers/agent-provider";
-import { agentById, getStation, phaseLabel } from "@/lib/agent-world";
+import { agentById, getRunStation, getRunStep, runStatusLabel } from "@/lib/agent-world";
 
 export function SectionAgentStrip({
   agentId,
@@ -11,9 +11,10 @@ export function SectionAgentStrip({
   agentId: keyof typeof agentById;
   title: string;
 }) {
-  const { activeAgent, loopState, setActiveAgent } = useAgentState();
-  const loop = loopState.find((entry) => entry.agentId === agentId) ?? loopState[0];
-  const station = getStation(loop.stationId);
+  const { activeAgent, runs, setActiveAgent } = useAgentState();
+  const run = runs.find((entry) => entry.agentId === agentId) ?? runs[0];
+  const station = getRunStation(run);
+  const step = getRunStep(run);
   const agent = agentById[agentId];
   const isActive = activeAgent === agentId;
 
@@ -25,7 +26,7 @@ export function SectionAgentStrip({
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.12em] text-text-muted">{title}</p>
             <p className="mt-1 text-sm text-text-secondary">
-              {agent.name} is {phaseLabel[loop.phase]} {loop.task.toLowerCase()} near {station.label}.
+              {agent.name} is {runStatusLabel[run.status]} {step.title.toLowerCase()} near {station.label}.
             </p>
           </div>
         </div>
