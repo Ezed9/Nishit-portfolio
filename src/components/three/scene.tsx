@@ -84,19 +84,25 @@ function AgentMesh({
   color,
   position,
   active,
-  offset
+  offset,
+  staticMode
 }: {
   id: AgentId;
   color: string;
   position: [number, number, number];
   active: boolean;
   offset: number;
+  staticMode: boolean;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const auraRef = useRef<THREE.Mesh>(null);
   const { setActiveAgent } = useAgentState();
 
   useFrame((state) => {
+    if (staticMode) {
+      return;
+    }
+
     if (!groupRef.current || !auraRef.current) {
       return;
     }
@@ -109,7 +115,11 @@ function AgentMesh({
   });
 
   return (
-    <Float speed={1.8} rotationIntensity={0.35} floatIntensity={0.6}>
+    <Float
+      speed={staticMode ? 0 : 1.8}
+      rotationIntensity={staticMode ? 0 : 0.35}
+      floatIntensity={staticMode ? 0 : 0.6}
+    >
       <group
         ref={groupRef}
         onClick={() => setActiveAgent(id)}
@@ -135,7 +145,7 @@ function AgentMesh({
   );
 }
 
-export function AgentScene() {
+export function AgentScene({ staticMode = false }: { staticMode?: boolean }) {
   const { activeAgent } = useAgentState();
 
   return (
@@ -154,6 +164,7 @@ export function AgentScene() {
             id={agent.id}
             offset={index}
             position={agent.position}
+            staticMode={staticMode}
           />
         ))}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
@@ -163,7 +174,9 @@ export function AgentScene() {
         <EffectComposer>
           <Bloom luminanceThreshold={0.18} intensity={0.7} mipmapBlur />
         </EffectComposer>
-        <OrbitControls enablePan={false} enableZoom={false} maxPolarAngle={1.8} minPolarAngle={0.8} />
+        {!staticMode ? (
+          <OrbitControls enablePan={false} enableZoom={false} maxPolarAngle={1.8} minPolarAngle={0.8} />
+        ) : null}
       </Canvas>
     </div>
   );

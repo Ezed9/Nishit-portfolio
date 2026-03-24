@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "visual:check": "playwright test",
+    "visual:update": "playwright test --update-snapshots",
+    "visual:open": "playwright test --ui"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
@@ -21,6 +24,7 @@
     "three": "^0.174.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "^22.13.10",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
